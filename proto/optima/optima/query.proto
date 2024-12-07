@@ -1,4 +1,5 @@
 syntax = "proto3";
+
 package optima.optima;
 
 import "amino/amino.proto";
@@ -11,20 +12,35 @@ option go_package = "optima/x/optima/types";
 
 // Query defines the gRPC querier service.
 service Query {
+  
   // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/optima/optima/params";
+  
+  }
+  
+  // Queries a list of EvaluateInvocable items.
+  rpc EvaluateInvocable (QueryEvaluateInvocableRequest) returns (QueryEvaluateInvocableResponse) {
+    option (google.api.http).get = "/optima/optima/evaluate_invocable/{invocableName}/{inputData}";
+  
   }
 }
-
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
 
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
+  
   // params holds all the parameters of this module.
-  Params params = 1 [
-    (gogoproto.nullable) = false,
-    (amino.dont_omitempty) = true
-  ];
+  Params params = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
 }
+
+message QueryEvaluateInvocableRequest {
+  string invocableName = 1;
+  string inputData     = 2;
+}
+
+message QueryEvaluateInvocableResponse {
+  string evaluationResult = 1;
+}
+

@@ -17,6 +17,13 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:       "params",
 					Short:     "Shows the parameters of the module",
 				},
+				{
+					RpcMethod:      "EvaluateInvocable",
+					Use:            "evaluate-invocable [invocable-name] [input-data]",
+					Short:          "Query evaluateInvocable",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "invocableName"}, {ProtoField: "inputData"}},
+				},
+
 				// this line is used by ignite scaffolding # autocli/query
 			},
 		},

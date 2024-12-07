@@ -74,7 +74,7 @@ func (k Keeper) LoadModels(path string) error {
 	return nil
 }
 
-func (k Keeper) EvaluateInvocable(invocableName string, inputData string) string {
+func (k Keeper) evaluate(invocableName string, inputData string) string {
 	cInvocableName := C.CString(invocableName)
 	defer C.free(unsafe.Pointer(cInvocableName))
 	cInputData := C.CString(inputData)
