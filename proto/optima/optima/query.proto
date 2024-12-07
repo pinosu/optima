@@ -24,6 +24,12 @@ service Query {
     option (google.api.http).get = "/optima/optima/evaluate_invocable/{invocableName}/{inputData}";
   
   }
+  
+  // Queries a list of GetJob items.
+  rpc GetJob (QueryGetJobRequest) returns (QueryGetJobResponse) {
+    option (google.api.http).get = "/optima/optima/get_job/{id}";
+  
+  }
 }
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -41,6 +47,14 @@ message QueryEvaluateInvocableRequest {
 }
 
 message QueryEvaluateInvocableResponse {
+  string evaluationResult = 1;
+}
+
+message QueryGetJobRequest {
+  uint64 id = 1;
+}
+
+message QueryGetJobResponse {
   string evaluationResult = 1;
 }
 

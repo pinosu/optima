@@ -24,6 +24,13 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "invocableName"}, {ProtoField: "inputData"}},
 				},
 
+				{
+					RpcMethod:      "GetJob",
+					Use:            "get-job [id]",
+					Short:          "Query getJob",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "id"}},
+				},
+
 				// this line is used by ignite scaffolding # autocli/query
 			},
 		},

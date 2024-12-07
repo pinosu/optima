@@ -42,7 +42,8 @@ func (app *App) registerWasmModules(
 		return nil, fmt.Errorf("error while reading wasm config: %s", err)
 	}
 
-	customHandler := wasmkeeper.WithMessageHandler(optimakeeper.NewCustomMsgHandler(&app.OptimaKeeper))
+	customHandler := wasmkeeper.WithMessageHandler(
+		optimakeeper.NewCustomMsgHandler(&app.OptimaKeeper))
 
 	wasmOpts = append(wasmOpts, customHandler)
 

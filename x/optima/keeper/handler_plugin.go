@@ -11,11 +11,6 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
-// abstract keeper
-type msKeeper interface {
-	Evaluate(invocableName string, inputData string) string
-}
-
 type CustomMsgHandler struct {
 	k *Keeper
 }
@@ -29,6 +24,7 @@ type OptimaMsg struct {
 }
 
 type Invocable struct {
+	JobID         uint64 `json:"job_id"`
 	InvocableName string `json:"invocable_name"`
 	InputData     string `json:"input_data"`
 }
@@ -42,8 +38,7 @@ func (h CustomMsgHandler) DispatchMsg(ctx sdk.Context, contractAddr sdk.AccAddre
 		return nil, nil, nil, sdkerrors.ErrJSONUnmarshal.Wrap("custom message")
 	}
 
-	res := h.k.Evaluate(customMsg.Invocable.InvocableName, customMsg.Invocable.InputData)
-	ctx.Logger().Info("=========================================================")
-	ctx.Logger().Info(res)
+	h.k.Evaluate(ctx, customMsg.Invocable.JobID, customMsg.Invocable.InvocableName, customMsg.Invocable.InputData)
+
 	return []sdk.Event{}, nil, nil, nil
 }

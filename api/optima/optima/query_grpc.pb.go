@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	Query_Params_FullMethodName            = "/optima.optima.Query/Params"
 	Query_EvaluateInvocable_FullMethodName = "/optima.optima.Query/EvaluateInvocable"
+	Query_GetJob_FullMethodName            = "/optima.optima.Query/GetJob"
 )
 
 // QueryClient is the client API for Query service.
@@ -31,6 +32,8 @@ type QueryClient interface {
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 	// Queries a list of EvaluateInvocable items.
 	EvaluateInvocable(ctx context.Context, in *QueryEvaluateInvocableRequest, opts ...grpc.CallOption) (*QueryEvaluateInvocableResponse, error)
+	// Queries a list of GetJob items.
+	GetJob(ctx context.Context, in *QueryGetJobRequest, opts ...grpc.CallOption) (*QueryGetJobResponse, error)
 }
 
 type queryClient struct {
@@ -59,6 +62,15 @@ func (c *queryClient) EvaluateInvocable(ctx context.Context, in *QueryEvaluateIn
 	return out, nil
 }
 
+func (c *queryClient) GetJob(ctx context.Context, in *QueryGetJobRequest, opts ...grpc.CallOption) (*QueryGetJobResponse, error) {
+	out := new(QueryGetJobResponse)
+	err := c.cc.Invoke(ctx, Query_GetJob_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility
@@ -67,6 +79,8 @@ type QueryServer interface {
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 	// Queries a list of EvaluateInvocable items.
 	EvaluateInvocable(context.Context, *QueryEvaluateInvocableRequest) (*QueryEvaluateInvocableResponse, error)
+	// Queries a list of GetJob items.
+	GetJob(context.Context, *QueryGetJobRequest) (*QueryGetJobResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -79,6 +93,9 @@ func (UnimplementedQueryServer) Params(context.Context, *QueryParamsRequest) (*Q
 }
 func (UnimplementedQueryServer) EvaluateInvocable(context.Context, *QueryEvaluateInvocableRequest) (*QueryEvaluateInvocableResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EvaluateInvocable not implemented")
+}
+func (UnimplementedQueryServer) GetJob(context.Context, *QueryGetJobRequest) (*QueryGetJobResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetJob not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 
@@ -129,6 +146,24 @@ func _Query_EvaluateInvocable_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_GetJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).GetJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_GetJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).GetJob(ctx, req.(*QueryGetJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -143,6 +178,10 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EvaluateInvocable",
 			Handler:    _Query_EvaluateInvocable_Handler,
+		},
+		{
+			MethodName: "GetJob",
+			Handler:    _Query_GetJob_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

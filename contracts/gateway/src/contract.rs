@@ -30,8 +30,8 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response<OptimaMsg>, ContractError> {
     match msg {
-        ExecuteMsg::Evaluate { invocable_name, input_data } => {
-            evaluate(invocable_name, input_data)
+        ExecuteMsg::Evaluate { job_id, invocable_name, input_data } => {
+            evaluate(job_id, invocable_name, input_data)
         }
     }
 }
@@ -42,14 +42,14 @@ pub fn query(_deps: Deps, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
 }
 
 fn evaluate(
+    job_id: u64,
     invocable_name: String,
     input_data: String,
 ) -> Result<Response<OptimaMsg>, ContractError> {
     let custom_msg = OptimaMsg::Invocable {
+        job_id,
         invocable_name,
         input_data,
     };
-
-    // Wrap the custom message in CosmosMsg::Custom
     Ok(Response::new().add_message(CosmosMsg::Custom(custom_msg)))
 }

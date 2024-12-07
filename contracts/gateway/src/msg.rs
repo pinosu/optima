@@ -7,6 +7,7 @@ pub struct InstantiateMsg {}
 #[cw_serde]
 pub enum ExecuteMsg {
     Evaluate {
+        job_id: u64,
         invocable_name: String,
         input_data: String,
     }
@@ -19,6 +20,7 @@ pub enum QueryMsg {}
 #[cw_serde]
 pub enum OptimaMsg {
     Invocable {
+        job_id: u64,
         invocable_name: String,
         input_data: String,
     }

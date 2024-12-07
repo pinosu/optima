@@ -10,6 +10,8 @@ void free_memory(void* ptr, size_t len);
 */
 import "C"
 import (
+	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"unsafe"
 
@@ -31,7 +33,14 @@ type (
 		// should be the x/gov module account.
 		authority string
 	}
+
+	Job struct {
+		Id     uint64
+		Result string
+	}
 )
+
+var keyPrefixJob = []byte("job:")
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
@@ -74,8 +83,43 @@ func (k Keeper) LoadModels(path string) error {
 	return nil
 }
 
-func (k Keeper) Evaluate(invocableName string, inputData string) string {
-	return k.evaluate(invocableName, inputData)
+func (k Keeper) Evaluate(ctx sdk.Context, job_id uint64, invocableName string, inputData string) error {
+	res := k.evaluate(invocableName, inputData)
+	job := Job{
+		Id:     job_id,
+		Result: res,
+	}
+	return k.setJob(ctx, job)
+}
+
+func (k Keeper) setJob(ctx sdk.Context, job Job) error {
+	key := jobKey(job.Id)
+	keyExists, err := k.storeService.OpenKVStore(ctx).Has(key)
+	if err != nil {
+		return err
+	}
+	if keyExists {
+		return fmt.Errorf("job id already exists")
+	}
+	bz, err := json.Marshal(job)
+	if err != nil {
+		return err
+	}
+	return k.storeService.OpenKVStore(ctx).Set(jobKey(job.Id), bz)
+}
+
+func (k Keeper) getJob(ctx sdk.Context, jobID uint64) (Job, error) {
+	key := jobKey(jobID)
+	bz, err := k.storeService.OpenKVStore(ctx).Get(key)
+	if err != nil {
+		return Job{}, err
+	}
+	var job Job
+	err = json.Unmarshal(bz, &job)
+	if err != nil {
+		return Job{}, err
+	}
+	return job, nil
 }
 
 func (k Keeper) evaluate(invocableName string, inputData string) string {
@@ -87,4 +131,10 @@ func (k Keeper) evaluate(invocableName string, inputData string) string {
 	outputData := C.evaluate_invocable(cInvocableName, cInputData, &outputDataLen)
 	defer C.free_memory(unsafe.Pointer(outputData), outputDataLen)
 	return string(C.GoBytes(unsafe.Pointer(outputData), C.int(outputDataLen)))
+}
+
+func jobKey(jobID uint64) []byte {
+	jobIDBytes := make([]byte, 8)
+	binary.BigEndian.PutUint64(jobIDBytes, jobID)
+	return append([]byte(keyPrefixJob), jobIDBytes...)
 }
