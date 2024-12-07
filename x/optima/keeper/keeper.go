@@ -1,7 +1,15 @@
 package keeper
 
+/*
+#cgo LDFLAGS:  -L/usr/local/lib -ldmnengine
+#include <stdlib.h>
+
+size_t load_models(const char* c_dir);
+*/
+import "C"
 import (
 	"fmt"
+	"unsafe"
 
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/log"
@@ -50,4 +58,16 @@ func (k Keeper) GetAuthority() string {
 // Logger returns a module-specific logger.
 func (k Keeper) Logger() log.Logger {
 	return k.logger.With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func (k Keeper) LoadModels(path string) error {
+	if len(path) == 0 {
+		return fmt.Errorf("invalid path for models")
+	}
+	cDir := C.CString(path)
+	defer C.free(unsafe.Pointer(cDir))
+	if C.load_models(cDir) == 0 {
+		return fmt.Errorf("error loading models")
+	}
+	return nil
 }
