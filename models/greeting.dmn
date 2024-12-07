@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             namespace="https://decision-toolkit.org/greetings"
+             name="greeting"
+             id="_cm42ip1f60000ai05rea5i1tx">
+
+    <description>
+        A simple model that will greet you back when you are nice to it.
+    </description>
+
+    <decision name="Greeting Message" id="_75b3add2-4d36-4a19-a76c-268b49b2f436">
+        <variable typeRef="string" name="Greeting Message"/>
+        <informationRequirement id="_8c935b50-10b7-426b-80a9-dddb4264b4a9">
+            <requiredInput href="#_cba86e4d-e91c-46a2-9176-e9adf88e15db"/>
+        </informationRequirement>
+        <literalExpression>
+            <text>"Hello " + Full Name</text>
+        </literalExpression>
+    </decision>
+
+    <inputData name="Full Name" id="_cba86e4d-e91c-46a2-9176-e9adf88e15db">
+        <variable typeRef="string" name="Full Name"/>
+    </inputData>
+
+</definitions>
