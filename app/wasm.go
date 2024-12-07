@@ -3,6 +3,8 @@ package app
 import (
 	"fmt"
 
+	optimakeeper "optima/x/optima/keeper"
+
 	storetypes "cosmossdk.io/store/types"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
@@ -39,6 +41,10 @@ func (app *App) registerWasmModules(
 	if err != nil {
 		return nil, fmt.Errorf("error while reading wasm config: %s", err)
 	}
+
+	customHandler := wasmkeeper.WithMessageHandler(optimakeeper.NewCustomMsgHandler(&app.OptimaKeeper))
+
+	wasmOpts = append(wasmOpts, customHandler)
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
