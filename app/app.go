@@ -302,6 +302,11 @@ func New(
 		return nil, err
 	}
 
+	err := app.OptimaKeeper.LoadModels("/home/pino/dev/optima/models")
+	if err != nil {
+		panic(err)
+	}
+
 	return app, app.WasmKeeper.InitializePinnedCodes(app.NewUncachedContext(true, tmproto.Header{}))
 
 }
