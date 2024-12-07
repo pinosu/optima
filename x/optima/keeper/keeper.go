@@ -5,6 +5,8 @@ package keeper
 #include <stdlib.h>
 
 size_t load_models(const char* c_dir);
+const char* evaluate_invocable(const char* c_invocable_name, const char* c_input_data, size_t* output_data_len);
+void free_memory(void* ptr, size_t len);
 */
 import "C"
 import (
@@ -70,4 +72,15 @@ func (k Keeper) LoadModels(path string) error {
 		return fmt.Errorf("error loading models")
 	}
 	return nil
+}
+
+func (k Keeper) EvaluateInvocable(invocableName string, inputData string) string {
+	cInvocableName := C.CString(invocableName)
+	defer C.free(unsafe.Pointer(cInvocableName))
+	cInputData := C.CString(inputData)
+	defer C.free(unsafe.Pointer(cInputData))
+	var outputDataLen C.size_t
+	outputData := C.evaluate_invocable(cInvocableName, cInputData, &outputDataLen)
+	defer C.free_memory(unsafe.Pointer(outputData), outputDataLen)
+	return string(C.GoBytes(unsafe.Pointer(outputData), C.int(outputDataLen)))
 }
