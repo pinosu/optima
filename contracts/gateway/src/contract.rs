@@ -41,7 +41,7 @@ pub fn query(_deps: Deps, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
     unimplemented!()
 }
 
-fn evaluate(
+pub fn evaluate(
     job_id: u64,
     invocable_name: String,
     input_data: String,
